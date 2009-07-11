@@ -8,8 +8,13 @@ Hub = new JS.Class({
     this._albumList   = Ojay('#libraryView .albums ul');
     this._trackList   = Ojay('#libraryView .tracks');
     
+    this._player      = Ojay('#player .qt');
+    this._playerInfo  = Ojay('#player .info');
+    
     this._comet.subscribe('/all/newchannel', this.method('_newChannel'));
     this.setupLoginForm();
+    
+    this._currentStation = null;
   },
   
   setupLoginForm: function() {
@@ -22,7 +27,7 @@ Hub = new JS.Class({
   
   loadLibrary: function(params) {
     this._libraryName    = params.libraryName;
-    this._libraryAddress = params.libraryAddress;
+    this._libraryAddress = params.libraryAddress.replace(/\/?$/, '');
     Ojay.HTTP.GET(this._libraryAddress, {jsonp: 'callback'}, function(data) {
       
       this._artists = new JS.SortedSet([]);
@@ -108,6 +113,15 @@ Hub = new JS.Class({
     });
   },
   
+  play: function(track) {
+    var objectCode = QT_GenerateOBJECTText(this._libraryAddress + track.path,
+                                           '320', '16', '',
+                                           'AUTOPLAY', 'True',
+                                           'SCALE', 'Aspect');
+    this._player.setContent(objectCode);
+    this._playerInfo.setContent(track.artist + ' - ' + track.name);
+  },
+  
   extend: {
     Album: new JS.Class({
       include: JS.Comparable,
@@ -174,7 +188,10 @@ Hub = new JS.Class({
           h.td({className: 'artist'}, self.artist);
           h.td({className: 'album'}, self.album);
           h.td({className: 'track'}, String(self.trackNo));
-          h.td({className: 'name'}, self.name);
+          h.td({className: 'name'}, function(h) {
+            var link = Ojay( h.a({href: '#'}, self.name) );
+            link.on('click', Ojay.stopDefault)._(self._hub).play(self);
+          });
         }) );
         
         return this._html;

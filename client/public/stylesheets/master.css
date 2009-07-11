@@ -2,7 +2,7 @@ body {
   margin:       0 0 40px;
   padding:      0 0 40px;
   font:         13px/1.835 Helvetica, Arial, sans-serif;
-  background:   #eee;
+  background:   #4485c5;
 }
 
 a {
@@ -15,21 +15,41 @@ a {
 }
 
 .header {
-  border-bottom: 1px solid #666;
+  border-bottom: 1px solid #194571;
   background:   #fff;
   margin:       0 0 32px;
+  height:       80px;
+  position:     relative;
 }
 
 .header h1 {
   margin:       0;
-  padding:      0.25em 0;
+  padding:      0.25em 0 0 16px;
   font:         bold 48px Helvetica, Arial, sans-serif;
   letter-spacing: -0.06em;
-  text-align:   center;
+}
+
+#player {
+  border:       1px solid #999;
+  border-top:   0;
+  border-bottom:0;
+  background:   #edf2ab;
+  position:     absolute;
+  top:          0;
+  left:         320px;
+  width:        320px;
+  height:       48px;
+  padding:      16px;
+}
+
+#player .info {
+  margin:       0;
+  font-size:    1em;
+  font-weight:  normal;
 }
 
 #sidebar {
-  border:       1px solid #999;
+  border:       1px solid #194571;
   border-left:  0;
   background:   #fff;
   width:        199px;
@@ -41,7 +61,7 @@ h3 {
   margin:       0;
   font-size:    1.0em;
   text-transform: uppercase;
-  background:   #f4f4f4;
+  background:   #9ac4ef;
   padding:      4px 16px;
 }
 
@@ -62,7 +82,7 @@ h3 {
 }
 
 #main {
-  border:       1px solid #999;
+  border:       1px solid #194571;
   background:   #fff;
   width:        760px;
   float:        left;

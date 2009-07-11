@@ -5,7 +5,7 @@
       "album":    "<%= track[Outcast::ITunes::ALBUM].gsub('"', "\\\"") %>",
       "trackNo":  <%= track[Outcast::ITunes::NUMBER] || 0 %>,
       "name":     "<%= track[Outcast::ITunes::NAME].gsub('"', "\\\"") %>",
-      "path":     "<%= CGI.escape track[Outcast::ITunes::LOCATION] %>"
+      "path":     "/play/<%= CGI.escape track[Outcast::ITunes::LOCATION] %>"
     }<%= i == @library.size - 1 ? '' : ',' %>
   <% end %>
 ]);
