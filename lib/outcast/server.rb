@@ -18,7 +18,7 @@ module Outcast
       Sinatra::Application.set :views, File.dirname(__FILE__)
       
       Sinatra::Application.get('/') do
-        @jsonp_callback = params['jsonp'] || JSONP_CALLBACK
+        @jsonp_callback = params['callback'] || JSONP_CALLBACK
         @library = Outcast::Server.instance.library
         erb :manifest
       end
