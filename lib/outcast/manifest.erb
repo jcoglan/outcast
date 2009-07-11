@@ -5,9 +5,10 @@
   "tracks": [
     <% @library.entries.each_with_index do |track, i| %>
       {
-        "artist":   "<%= CGI.escape track[Outcast::ITunes::ARTIST] %>",
-        "album":    "<%= CGI.escape track[Outcast::ITunes::ALBUM] %>",
-        "name":     "<%= CGI.escape track[Outcast::ITunes::NAME] %>",
+        "artist":   "<%= track[Outcast::ITunes::ARTIST].gsub('"', "\\\"") %>",
+        "album":    "<%= track[Outcast::ITunes::ALBUM].gsub('"', "\\\"") %>",
+        "trackNo":  <%= track[Outcast::ITunes::NUMBER] || 0 %>,
+        "name":     "<%= track[Outcast::ITunes::NAME].gsub('"', "\\\"") %>",
         "path":     "<%= CGI.escape track[Outcast::ITunes::LOCATION] %>"
       }<%= i == @library.size - 1 ? '' : ',' %>
     <% end %>

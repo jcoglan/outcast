@@ -21,6 +21,7 @@ module Outcast
     ARTIST    = 'Artist'
     ALBUM     = 'Album'
     NAME      = 'Name'
+    NUMBER    = 'Track Number'
     LOCATION  = 'Location'
     
     def self.load_library(dir, &block)

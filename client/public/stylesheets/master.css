@@ -1,8 +1,13 @@
 body {
-  margin:       0;
-  padding:      0;
+  margin:       0 0 40px;
+  padding:      0 0 40px;
   font:         13px/1.835 Helvetica, Arial, sans-serif;
   background:   #eee;
+}
+
+a {
+  color:        #000;
+  font-weight:  bold;
 }
 
 .header {
@@ -24,10 +29,12 @@ body {
   border-left:  0;
   background:   #fff;
   width:        199px;
+  float:        left;
+  margin-right: 16px;
 }
 
-#sidebar h3 {
-  margin:       0 0 0.5em;
+h3 {
+  margin:       0;
   font-size:    1.0em;
   text-transform: uppercase;
   background:   #f4f4f4;
@@ -35,7 +42,7 @@ body {
 }
 
 #sidebar form {
-  padding:      0 16px 16px;
+  padding:      8px 16px 16px;
 }
 
 #sidebar form label {
@@ -50,3 +57,53 @@ body {
   font-size:    0.8em;
 }
 
+#main {
+  border:       1px solid #999;
+  background:   #fff;
+  width:        760px;
+  float:        left;
+}
+
+#main .clear {
+  clear:        both;
+}
+
+.artists, .albums {
+  float:        left;
+  width:        380px;
+  height:       200px;
+  overflow:     auto;
+}
+
+.artists ul, .albums ul {
+  margin:       0;
+  padding:      0;
+  list-style:   none;
+}
+
+.artists li, .albums li {
+  margin:       0;
+  padding:      4px 16px;
+  border-top:   1px solid #ccc;
+  list-style:   none;
+}
+
+.tracks table {
+  clear:        both;
+  width:        760px;
+  border-collapse: collapse;
+}
+
+.tracks table thead td {
+  font-weight:  bold;
+  background:   #f4f4f4;
+}
+
+.tracks table td {
+  border-top:   1px solid #ccc;
+  padding:      4px 8px;
+}
+
+.tracks table .name {
+  width:        250px;
+}
