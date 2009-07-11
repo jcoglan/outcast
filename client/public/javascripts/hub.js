@@ -25,20 +25,15 @@ Hub = new JS.Class({
     this._libraryAddress = params.libraryAddress;
     Ojay.HTTP.GET(this._libraryAddress, {jsonp: 'callback'}, function(data) {
       
-      this._artists = data.artists.reduce(function(set, artist) {
-        set.add(artist);
-        return set;
-      }, new JS.SortedSet([]) );
+      this._artists = new JS.SortedSet([]);
+      this._albums  = new JS.SortedSet([]);
+      this._tracks  = new JS.SortedSet([]);
       
-      this._albums = data.albums.reduce(function(set, album) {
-        set.add(album);
-        return set;
-      }, new JS.SortedSet([]) );
-      
-      this._tracks = data.tracks.reduce(function(set, track) {
-        set.add(new Hub.Track(track));
-        return set;
-      }, new JS.SortedSet([]) );
+      data.forEach(function(track) {
+        this._artists.add(track.artist);
+        this._albums.add(new Hub.Album(this, track.artist, track.album));
+        this._tracks.add(new Hub.Track(this, track));
+      }, this);
       
       this._comet.publish('/all/newchannel', {name: this._libraryName});
       Ojay('#login').hide();
@@ -62,6 +57,11 @@ Hub = new JS.Class({
   
   refreshLibraryView: function() {
     this._artistList.setContent('');
+    
+    var all = Ojay( Ojay.HTML.a({href: '#'}, 'All artists') );
+    all.on('click', Ojay.stopDefault)._(this).filterByArtist();
+    this._artistList.insert(Ojay.HTML.li(all.node));
+    
     this._artists.forEach(function(artist) {
       var link = Ojay( Ojay.HTML.a({href: '#'}, artist) );
       this._artistList.insert(Ojay.HTML.li(link.node));
@@ -69,10 +69,13 @@ Hub = new JS.Class({
     }, this);
     
     this._albumList.setContent('');
+    
+    var all = Ojay( Ojay.HTML.a({href: '#'}, 'All albums') );
+    all.on('click', Ojay.stopDefault)._(this).filterByAlbum();
+    this._albumList.insert(Ojay.HTML.li(all.node));
+    
     this._albums.forEach(function(album) {
-      var link = Ojay( Ojay.HTML.a({href: '#'}, album) );
-      this._albumList.insert(Ojay.HTML.li(link.node));
-      link.on('click', Ojay.stopDefault)._(this).filterByAlbum(album);
+      this._albumList.insert(album.getHTML());
     }, this);
     
     var tracks = this._tracks;
@@ -91,18 +94,56 @@ Hub = new JS.Class({
   },
   
   filterByArtist: function(artist) {
+    this._albums.forEach(function(album) {
+      album[ !artist || album.artist === artist ? 'show' : 'hide' ]();
+    });
     this._tracks.forEach(function(track) {
-      track[ track.artist === artist ? 'show' : 'hide' ]();
+      track[ !artist || track.artist === artist ? 'show' : 'hide' ]();
     });
   },
   
   filterByAlbum: function(album) {
     this._tracks.forEach(function(track) {
-      track[ track.album === album ? 'show' : 'hide' ]();
+      track[ !album || track.album === album ? 'show' : 'hide' ]();
     });
   },
   
   extend: {
+    Album: new JS.Class({
+      include: JS.Comparable,
+      
+      initialize: function(hub, artist, name) {
+        this._hub   = hub;
+        this.artist = artist;
+        this.name   = name;
+      },
+      
+      compareTo: function(other) {
+        return this.name < other.name ? -1 : (this.name > other.name ? 1 : 0);
+      },
+      
+      equals: function(other) {
+        return other instanceof this.klass &&
+               this.artist === other.artist &&
+               this.name === other.name;
+      },
+      
+      getHTML: function() {
+        if (this._html) return this._html;
+        var self = this;
+        
+        this._html = Ojay( Ojay.HTML.li(function(h) {
+          var link = Ojay(h.a({href: '#'}, self.name));
+          link.on('click', Ojay.stopDefault)._(self._hub).filterByAlbum(self.name);
+        }) );
+        
+        return this._html;
+      },
+      
+      show: function() { this.getHTML().show() },
+      hide: function() { this.getHTML().hide() }
+    }),
+    
     Track: new JS.Class({
       include: JS.Comparable,
       
@@ -113,7 +154,8 @@ Hub = new JS.Class({
         }
       },
       
-      initialize: function(data) {
+      initialize: function(hub, data) {
+        this._hub = hub;
         JS.extend(this, data);
       },
       
@@ -139,7 +181,6 @@ Hub = new JS.Class({
       },
       
       show: function() { this.getHTML().show() },
-      
       hide: function() { this.getHTML().hide() }
     }) 
   }

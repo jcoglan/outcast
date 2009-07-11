@@ -1,16 +1,11 @@
-<%= @jsonp_callback %>({
-  "artists":  <%= @library.artists.entries.inspect %>,
-  "albums":   <%= @library.albums.entries.inspect %>,
-  
-  "tracks": [
-    <% @library.entries.each_with_index do |track, i| %>
-      {
-        "artist":   "<%= track[Outcast::ITunes::ARTIST].gsub('"', "\\\"") %>",
-        "album":    "<%= track[Outcast::ITunes::ALBUM].gsub('"', "\\\"") %>",
-        "trackNo":  <%= track[Outcast::ITunes::NUMBER] || 0 %>,
-        "name":     "<%= track[Outcast::ITunes::NAME].gsub('"', "\\\"") %>",
-        "path":     "<%= CGI.escape track[Outcast::ITunes::LOCATION] %>"
-      }<%= i == @library.size - 1 ? '' : ',' %>
-    <% end %>
-  ]
-});
+<%= @jsonp_callback %>([
+  <% @library.entries.each_with_index do |track, i| %>
+    {
+      "artist":   "<%= track[Outcast::ITunes::ARTIST].gsub('"', "\\\"") %>",
+      "album":    "<%= track[Outcast::ITunes::ALBUM].gsub('"', "\\\"") %>",
+      "trackNo":  <%= track[Outcast::ITunes::NUMBER] || 0 %>,
+      "name":     "<%= track[Outcast::ITunes::NAME].gsub('"', "\\\"") %>",
+      "path":     "<%= CGI.escape track[Outcast::ITunes::LOCATION] %>"
+    }<%= i == @library.size - 1 ? '' : ',' %>
+  <% end %>
+]);
