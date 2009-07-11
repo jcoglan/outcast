@@ -1,0 +1,21 @@
+#!/usr/bin/env ruby
+
+require 'rubygems'
+require 'oyster'
+
+spec = Oyster.spec do
+  name 'outcast -- serve your iTunes library over HTTP'
+  
+  synopsis 'outcast -d "My Documents/My Music/iTunes"'
+  
+  string :directory, :default => '.', :desc => 'Your iTunes directory'
+end
+
+begin
+  options = spec.parse
+rescue Oyster::HelpRendered
+  exit
+end
+
+require File.dirname(__FILE__) + '/../lib/outcast'
+Outcast::Server.start(options[:directory])

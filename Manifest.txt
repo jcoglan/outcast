@@ -1,0 +1,11 @@
+.autotest
+History.txt
+Manifest.txt
+README.txt
+Rakefile
+bin/outcast
+lib/outcast.rb
+lib/outcast/itunes.rb
+lib/outcast/server.rb
+lib/outcast/manifest.erb
+test/test_outcast.rb

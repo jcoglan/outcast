@@ -1,0 +1,14 @@
+<%= jsonp_callback %>({
+  "artists":  <%= @library.artists.entries.inspect %>,
+  "albums":   <%= @library.albums.entries.inspect %>,
+  
+  "tracks": [
+    <% @library.entries.each_with_index do |track, i| %>
+      {
+        "artist":   "<%= track[ITunes::ARTIST] %>",
+        "album":    "<%= track[ITunes::ALBUM] %>",
+        "name":     "<%= track[ITunes::NAME] %>"
+      }<%= i == @library.size - 1 ? '' : ',' %>
+    <% end %>
+  ]
+})
