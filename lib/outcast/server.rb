@@ -1,21 +1,34 @@
-require 'rack'
-require 'erb'
+require 'sinatra'
+require 'singleton'
 
 module Outcast
   class Server
     
-    PORT     = 8166
-    MANIFEST = '/'
-    CALLBACK = 'jsonpcallback'
+    include Singleton
+    attr_reader :library, :dir
     
-    SERVER_DIR = File.expand_path(File.dirname(__FILE__))
-    MANIFEST_TEMPLATE = File.join(SERVER_DIR, 'manifest.erb')
+    PORT = 8166
+    JSONP_CALLBACK = 'jsonpcallback'
     
     def self.start(dir)
-      new(dir).start
+      instance.start(dir)
     end
     
-    def initialize(dir)
+    def start(dir)
+      Sinatra::Application.set :views, File.dirname(__FILE__)
+      
+      Sinatra::Application.get('/') do
+        @jsonp_callback = params['jsonp'] || JSONP_CALLBACK
+        @library = Outcast::Server.instance.library
+        erb :manifest
+      end
+      
+      Sinatra::Application.get('/play/*') do
+        file = Outcast::Server.instance.dir + '/' + CGI.unescape(params['splat'].first)
+        headers('Content-Type' => 'application/octet-stream')
+        send_file(file)
+      end
+      
       @dir = File.expand_path(dir)
       puts "Starting Outcast server at #{dir}"
       
@@ -23,23 +36,8 @@ module Outcast
         puts "#{ track[ITunes::ARTIST] } : #{ track[ITunes::NAME] }"
       end
       puts "\nReady! Listening on port #{PORT}"
-    end
-    
-    def start
-      rack_handler.run(self, :Port => PORT)
-    end
-    
-    def call(env)
-      request = Rack::Request.new(env)
-      response = case request.path_info
-      when MANIFEST then manifest(request)
-      end
-      [200, {"Content-Type" => "text/html"}, [response]]
-    end
-    
-    def manifest(request)
-      jsonp_callback = request.params['jsonp'] || CALLBACK
-      ERB.new(File.read(MANIFEST_TEMPLATE)).result(binding)
+      
+      rack_handler.run(Sinatra::Application, :Port => PORT)
     end
     
   private
