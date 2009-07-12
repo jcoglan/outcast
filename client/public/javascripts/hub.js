@@ -14,7 +14,7 @@ Hub = new JS.Class({
     this._comet.subscribe('/all/newchannel', this.method('_newChannel'));
     this.setupLoginForm();
     
-    this._currentStation = null;
+    this._currentChannel = null;
   },
   
   setupLoginForm: function() {
@@ -22,6 +22,9 @@ Hub = new JS.Class({
     this._loginForm.on('submit', function(form, evnt) {
       evnt.stopDefault();
       this.loadLibrary(Ojay.Forms.getData(form));
+      
+      Ojay('#prelib').hide();
+      Ojay('#libraryView').setStyle({display: 'block'});
     }, this);
   },
   
@@ -89,10 +92,10 @@ Hub = new JS.Class({
     this._trackList.setContent( Ojay.HTML.table(function(h) {
       h.thead(
         h.tr(
-          h.td({className: 'artist'}, 'Artist'),
-          h.td({className: 'album'}, 'Album'),
-          h.td({className: 'track'}, 'Track No.'),
-          h.td({className: 'name'}, 'Name')
+          h.th({scope: 'col', className: 'artist'}, 'Artist'),
+          h.th({scope: 'col', className: 'album'}, 'Album'),
+          h.th({scope: 'col', className: 'track'}, 'No.'),
+          h.th({scope: 'col', className: 'name'}, 'Name')
         )
       );
       var body = Ojay(h.tbody());
@@ -117,7 +120,7 @@ Hub = new JS.Class({
   
   play: function(track) {
     var objectCode = QT_GenerateOBJECTText(track.path,
-                                           '420', '16', '',
+                                           '348', '16', '',
                                            'AUTOPLAY', 'True',
                                            'SCALE', 'Aspect');
     this._player.setContent(objectCode);
@@ -139,14 +142,16 @@ Hub = new JS.Class({
   },
   
   listen: function(channel) {
-    if (this._currentStation)
-      this._comet.unsubscribe('/station/' + this._currentStation,
+    if (this._currentChannel) {
+      this._comet.unsubscribe('/station/' + this._currentChannel.channelName,
                               this.method('receive'));
+      this._currentChannel.deselect();
+    }
     
-    if (!channel) return this._currentStation = null;
+    if (!channel) return this._currentChannel = null;
     
-    this._currentStation = channel.channelName;
-    this._comet.subscribe('/station/' + this._currentStation,
+    this._currentChannel = channel;
+    this._comet.subscribe('/station/' + this._currentChannel.channelName,
                           this.method('receive'));
   },
   
@@ -252,12 +257,21 @@ Hub = new JS.Class({
         if (this._html) return this._html;
         var self = this;
         
-        this._html = Ojay.HTML.li(function(h) {
+        this._html = Ojay( Ojay.HTML.li(function(h) {
           var link = Ojay( h.a({href: '#'}, self.displayName) );
-          link.on('click', Ojay.stopDefault)._(self._hub).listen(self);
-        });
+          link.on('click', Ojay.stopDefault)._(self).select(self);
+        }) );
         
         return this._html;
+      },
+      
+      select: function() {
+        this._hub.listen(this);
+        this.getHTML().addClass('selected');
+      },
+      
+      deselect: function() {
+        this.getHTML().removeClass('selected');
       }
     })
   }

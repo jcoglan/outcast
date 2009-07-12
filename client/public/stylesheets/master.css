@@ -1,55 +1,60 @@
 body {
-  margin:       0 0 40px;
-  padding:      0 0 40px;
+  border-top:   8px solid #000;
+  margin:       0;
+  padding:      0;
   font:         13px/1.835 Helvetica, Arial, sans-serif;
-  background:   #4485c5;
 }
 
 a {
-  color:        #000;
+  color:        #374e7b;
   font-weight:  bold;
-}
-
-#libraryView a {
   text-decoration: none;
 }
 
-.header {
-  border-bottom: 1px solid #194571;
+a:hover, .selected a {
+  background:   #374e7b;
+  color:        #fff;
+}
+
+#header {
   background:   #fff;
-  margin:       0 0 32px;
-  height:       80px;
+  margin:       0 0 16px;
+  height:       104px;
   position:     relative;
 }
 
-.header h1 {
-  margin:       0;
-  padding:      0.25em 0 0 16px;
+#header h1 {
+  background:   #374e7b;
+  color:        #fff;
+  float:        left;
+  margin:       16px 0 0 16px;
+  padding:      0.25em;
   font:         bold 48px Helvetica, Arial, sans-serif;
   letter-spacing: -0.06em;
 }
 
+#footer {
+  clear:        both;
+  margin:       32px 0 0;
+  padding:      16px;
+  border-top:   1px solid #ccc;
+}
+
 #player {
-  border:       1px solid #999;
-  border-top:   0;
-  border-bottom:0;
-  background:   #edf2ab;
   position:     absolute;
   top:          0;
   left:         216px;
-  width:        726px;
+  width:        728px;
   height:       48px;
   padding:      16px;
 }
 
 #player .info {
-  margin:       0;
-  font-size:    1em;
-  font-weight:  normal;
+  margin:       0 0 4px;
+  font:         italic 1.0em Georgia, Times New Roman, serif;
 }
 
 #sidebar {
-  border:       1px solid #194571;
   border-left:  0;
   background:   #fff;
   width:        199px;
@@ -57,12 +62,13 @@ a {
   margin-right: 16px;
 }
 
-h3 {
+h3, th {
+  border-top:   2px solid #ccc;
   margin:       0;
-  font-size:    1.0em;
+  font:         italic 1.3em Georgia, Times New Roman, serif;
   text-transform: uppercase;
-  background:   #9ac4ef;
-  padding:      4px 16px;
+  text-align:   left;
+  padding:      12px 16px 4px;
 }
 
 #sidebar form {
@@ -81,11 +87,42 @@ h3 {
   font-size:    0.8em;
 }
 
+#channels ul {
+  margin:       8px 0 0 16px;
+  padding:      0;
+  list-style:   none;
+  font:         italic 1.0em Georgia, Times New Roman, serif;
+}
+
+#channels li {
+  margin:       0 0 4px;
+  padding:      0;
+  list-style:   none;
+}
+
 #main {
-  border:       1px solid #194571;
   background:   #fff;
   width:        760px;
   float:        left;
+}
+
+#libraryView {
+  display:      none;
+}
+
+#prelib {
+  font-family:  Georgia, Times New Roman, serif;
+  font-style:   italic;
+  padding:      0 64px 64px;
+}
+
+#prelib h2 {
+  font-size:    3em;
+  margin:       0 0 0.5em;
+}
+
+#prelib p {
+  font-size:    1.4em;
 }
 
 #main .clear {
@@ -95,14 +132,14 @@ h3 {
 .artists, .albums {
   float:        left;
   width:        380px;
-  height:       200px;
-  overflow:     auto;
 }
 
 .artists ul, .albums ul {
   margin:       0;
   padding:      0;
   list-style:   none;
+  height:       200px;
+  overflow:     auto;
 }
 
 .artists li, .albums li {
@@ -118,14 +155,9 @@ h3 {
   border-collapse: collapse;
 }
 
-.tracks table thead td {
-  font-weight:  bold;
-  background:   #9ac4ef;
-}
-
 .tracks table td {
   border-top:   1px solid #ccc;
-  padding:      4px 8px;
+  padding:      4px 16px;
 }
 
 .tracks table .name {

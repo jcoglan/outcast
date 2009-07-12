@@ -25,7 +25,7 @@
 </head>
 <body>
   
-  <div class="header">
+  <div id="header">
     <h1>Outcast</h1>
     <div id="player">
       <h4 class="info"></h4>
@@ -35,7 +35,7 @@
   
   <div id="sidebar">
     <div id="login">
-      <h3>Share your library</h3>
+      <h3>Your library</h3>
       <form action="/" method="post">
         <div class="form-row">
           <label for="libraryName">Name</label>
@@ -68,7 +68,19 @@
       <div class="tracks">
       </div>
     </div>
-    <div class="clear"></div>
+    
+    <div id="prelib">
+      <h2>Welcome to Outcast</h2>
+      <p>Outcast lets you broadcast music from your iTunes library in real time
+        to other computers over the web. If you&rsquo;re running an <tt>outcast</tt>
+        server, start a new channel by entering its address in the form on the left.</p>
+    </div>
+  </div>
+  
+  <div id="footer">
+    Outcast: a <a href="http://musichackday.org/">Music Hack Day</a> project
+    by <a href="http://jcoglan.com">James Coglan</a>.
+    Source code <a href="http://github.com/jcoglan/outcast">on GitHub</a>.
   </div>
   
   <script type="text/javascript" charset="utf-8">
