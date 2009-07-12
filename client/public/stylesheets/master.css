@@ -36,8 +36,8 @@ a {
   background:   #edf2ab;
   position:     absolute;
   top:          0;
-  left:         320px;
-  width:        320px;
+  left:         216px;
+  width:        726px;
   height:       48px;
   padding:      16px;
 }
@@ -120,7 +120,7 @@ h3 {
 
 .tracks table thead td {
   font-weight:  bold;
-  background:   #f4f4f4;
+  background:   #9ac4ef;
 }
 
 .tracks table td {

@@ -117,7 +117,7 @@ Hub = new JS.Class({
   
   play: function(track) {
     var objectCode = QT_GenerateOBJECTText(track.path,
-                                           '320', '16', '',
+                                           '420', '16', '',
                                            'AUTOPLAY', 'True',
                                            'SCALE', 'Aspect');
     this._player.setContent(objectCode);
