@@ -243,6 +243,11 @@ Hub = new JS.Class({
         return a < b ? -1 : (a > b ? 1 : 0);
       },
       
+      equals: function(other) {
+        return other instanceof this.klass &&
+               this.channelName === other.channelName;
+      },
+      
       getHTML: function() {
         if (this._html) return this._html;
         var self = this;
