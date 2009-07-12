@@ -6,7 +6,7 @@ require 'hoe'
 Hoe.spec 'outcast' do |p|
   # self.rubyforge_name = 'outcastx' # if different than 'outcast'
   p.developer('James Coglan', 'jcoglan@googlemail.com')
-  p.extra_deps = %w[oyster]
+  p.extra_deps = %w[oyster sinatra]
 end
 
 # vim: syntax=ruby

@@ -6,6 +6,21 @@ Outcast lets your serve your iTunes library over HTTP, and push
 tracks you're playing to anyone else over the web via a web-based
 iTunes GUI.
 
+To share your library with others, you need to expose your iTunes
+library over HTTP. To do this, check out the project from the repo
+and run the following:
+
+  sudo gem install hoe oyster sinatra
+  rake install_gem
+  
+Then, +cd+ into your iTunes directory (the one containing
+<tt>iTunes Music Library.xml</tt>) and run:
+
+  outcast
+
+This exposes a web service that allows your library to be accessed
+from your IP on port <tt>8166</tt>.
+
 
 == License
 
