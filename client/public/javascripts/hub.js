@@ -3,7 +3,7 @@ Hub = new JS.Class({
     this._comet = comet;
     this._channels = new JS.SortedSet([]);
     
-    this._channelList = Ojay('#channels div');
+    this._channelList = Ojay('#channels ul');
     this._artistList  = Ojay('#libraryView .artists ul');
     this._albumList   = Ojay('#libraryView .albums ul');
     this._trackList   = Ojay('#libraryView .tracks');
@@ -27,6 +27,7 @@ Hub = new JS.Class({
   
   loadLibrary: function(params) {
     this._libraryName    = params.libraryName;
+    this._channelName    = params.libraryName.replace(/[^a-z]/ig, '');
     this._libraryAddress = params.libraryAddress.replace(/\/?$/, '');
     Ojay.HTTP.GET(this._libraryAddress, {jsonp: 'callback'}, function(data) {
       
@@ -40,7 +41,8 @@ Hub = new JS.Class({
         this._tracks.add(new Hub.Track(this, track));
       }, this);
       
-      this._comet.publish('/all/newchannel', {name: this._libraryName});
+      this._comet.publish('/all/newchannel', {displayName: this._libraryName,
+                                              channelName: this._channelName});
       Ojay('#login').hide();
       
       this.refreshLibraryView();
@@ -48,16 +50,16 @@ Hub = new JS.Class({
   },
   
   _newChannel: function(channel) {
-    if (channel.name === this._libraryName) return;
-    this._channels.add(channel.name);
+    if (channel.channelName === this._channelName) return;
+    this._channels.add(new Hub.Channel(this, channel));
     this.refreshChannelList();
   },
   
   refreshChannelList: function() {
-    var channels = this._channels;
-    this._channelList.setContent( Ojay.HTML.ul(function(h) {
-      channels.forEach(h.method('li'));
-    }) );
+    this._channelList.setContent('');
+    this._channels.forEach(function(channel) {
+      this._channelList.insert(channel.getHTML());
+    }, this);
   },
   
   refreshLibraryView: function() {
@@ -114,12 +116,38 @@ Hub = new JS.Class({
   },
   
   play: function(track) {
-    var objectCode = QT_GenerateOBJECTText(this._libraryAddress + track.path,
+    var objectCode = QT_GenerateOBJECTText(track.path,
                                            '320', '16', '',
                                            'AUTOPLAY', 'True',
                                            'SCALE', 'Aspect');
     this._player.setContent(objectCode);
     this._playerInfo.setContent(track.artist + ' - ' + track.name);
+  },
+  
+  broadcast: function(track) {
+    this.play(track);
+    this._comet.publish('/station/' + this._channelName, {
+      artist:   track.artist,
+      name:     track.name,
+      path:     track.path
+    });
+    this.listen();
+  },
+  
+  receive: function(track) {
+    this.play(track);
+  },
+  
+  listen: function(channel) {
+    if (this._currentStation)
+      this._comet.unsubscribe('/station/' + this._currentStation,
+                              this.method('receive'));
+    
+    if (!channel) return this._currentStation = null;
+    
+    this._currentStation = channel.channelName;
+    this._comet.subscribe('/station/' + this._currentStation,
+                          this.method('receive'));
   },
   
   extend: {
@@ -171,6 +199,7 @@ Hub = new JS.Class({
       initialize: function(hub, data) {
         this._hub = hub;
         JS.extend(this, data);
+        this.path = hub._libraryAddress + data.path;
       },
       
       compareTo: function(other) {
@@ -190,7 +219,7 @@ Hub = new JS.Class({
           h.td({className: 'track'}, String(self.trackNo));
           h.td({className: 'name'}, function(h) {
             var link = Ojay( h.a({href: '#'}, self.name) );
-            link.on('click', Ojay.stopDefault)._(self._hub).play(self);
+            link.on('click', Ojay.stopDefault)._(self._hub).broadcast(self);
           });
         }) );
         
@@ -199,6 +228,32 @@ Hub = new JS.Class({
       
       show: function() { this.getHTML().show() },
       hide: function() { this.getHTML().hide() }
-    }) 
+    }),
+    
+    Channel: new JS.Class({
+      include: JS.Comparable,
+      
+      initialize: function(hub, config) {
+        this._hub = hub;
+        JS.extend(this, config);
+      },
+      
+      compareTo: function(other) {
+        var a = this.displayName, b = other.displayName;
+        return a < b ? -1 : (a > b ? 1 : 0);
+      },
+      
+      getHTML: function() {
+        if (this._html) return this._html;
+        var self = this;
+        
+        this._html = Ojay.HTML.li(function(h) {
+          var link = Ojay( h.a({href: '#'}, self.displayName) );
+          link.on('click', Ojay.stopDefault)._(self._hub).listen(self);
+        });
+        
+        return this._html;
+      }
+    })
   }
 });
