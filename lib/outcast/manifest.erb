@@ -1,10 +1,10 @@
 <%= @jsonp_callback %>([
   <% @library.entries.each_with_index do |track, i| %>
     {
-      "artist":   "<%= track[Outcast::ITunes::ARTIST].gsub('"', "\\\"") %>",
-      "album":    "<%= track[Outcast::ITunes::ALBUM].gsub('"', "\\\"") %>",
+      "artist":   "<%= (track[Outcast::ITunes::ARTIST] || '').gsub('"', "\\\"") %>",
+      "album":    "<%= (track[Outcast::ITunes::ALBUM] || '').gsub('"', "\\\"") %>",
       "trackNo":  <%= track[Outcast::ITunes::NUMBER] || 0 %>,
-      "name":     "<%= track[Outcast::ITunes::NAME].gsub('"', "\\\"") %>",
+      "name":     "<%= (track[Outcast::ITunes::NAME] || '').gsub('"', "\\\"") %>",
       "path":     "/play/<%= CGI.escape track[Outcast::ITunes::LOCATION] %>"
     }<%= i == @library.size - 1 ? '' : ',' %>
   <% end %>

@@ -3,5 +3,5 @@ require 'rack'
 require 'faye'
 require File.dirname(__FILE__) + '/app'
 
-use Faye::Proxy, :mount => '/comet'
+use Faye::RackAdapter, :mount => '/comet'
 run Sinatra::Application
